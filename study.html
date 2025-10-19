@@ -1,0 +1,1386 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EXPLORADORES DEL SABER — Nicaragua</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f0f9ff;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent1:#0ea5e9;
+      --accent2:#facc15; 
+      --accent3:#10b981;
+      --accent4:#7c3aed; 
+      --history:#ef4444;
+      --culture:#f59e0b;
+      --science:#10b981;
+      --success:#10b981;
+      --warning:#f59e0b;
+      --error:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial; margin:0; background:var(--bg); color:#0b1220;}
+    .wrap{max-width:1100px;margin:28px auto;padding:20px}
+    #loader{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;
+      background:linear-gradient(135deg,var(--accent1),#00d1ff 40%, #a7f3d0 100%);
+      z-index:9999; transition:opacity .6s ease, visibility .6s ease;
+    }
+    #loader.hidden{opacity:0; visibility:hidden;}
+    .loader-card{width:320px; background:rgba(255,255,255,0.12); padding:22px; border-radius:18px; text-align:center; box-shadow:0 10px 30px rgba(2,6,23,0.12)}
+    #mapa-nic{
+      width:240px;height:360px;margin:6px auto;background:transparent;
+      filter:drop-shadow(0 8px 24px rgba(2,6,23,0.18));
+      animation:mapPulse 2.6s ease-in-out infinite;
+    }
+    #loader h1{color:white;font-size:22px;margin-top:10px;text-shadow:0 6px 18px rgba(0,0,0,0.18)}
+    #loader p{color:#efffff;margin-top:6px;opacity:.95}
+    @keyframes mapPulse{
+      0%{transform:translateY(0) scale(0.98)}
+      50%{transform:translateY(-6px) scale(1.02)}
+      100%{transform:translateY(0) scale(0.98)}
+    }
+    header.app-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:20px 0}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand .logo{
+      width:62px;height:62px;border-radius:12px;background:linear-gradient(135deg,var(--accent4),var(--accent1));
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px;
+      box-shadow:0 8px 18px rgba(124,58,237,0.16)
+    }
+    .brand h1{font-size:20px;margin:0;color:#042b4a}
+    .brand p{font-size:13px;color:var(--muted);margin-top:4px}
+    .hero{
+      background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6));
+      border-radius:14px;padding:18px;display:flex;gap:18px;align-items:center;
+      box-shadow:0 8px 30px rgba(2,6,23,0.06)
+    }
+    .hero .left{flex:1;text-align:left}
+    .hero h2{font-size:22px;margin:0 0 8px 0;color:#05263a}
+    .hero p{margin:0;color:#234;opacity:.9}
+    .hero .cta{margin-top:12px}
+    .btn{
+      display:inline-block;background:linear-gradient(90deg,var(--accent1),var(--accent3)); color:white;padding:10px 16px;border-radius:10px;border:0;font-weight:600;cursor:pointer;text-decoration:none;
+      box-shadow:0 8px 18px rgba(2,6,23,0.08)
+    }
+    .btn.secondary{background:linear-gradient(90deg,#ffd54f,#f59e0b); color:#072034}
+    .btn.history{background:linear-gradient(90deg,var(--history),#f56565)}
+    .btn.culture{background:linear-gradient(90deg,var(--culture),#d97706)}
+    .btn.science{background:linear-gradient(90deg,var(--science),#059669)}
+    /* Secciones principales */
+    .sections{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:24px}
+    .section-card{
+      background:var(--card);border-radius:14px;padding:24px;text-align:center;
+      box-shadow:0 8px 24px rgba(2,6,23,0.08);transition:transform 0.3s ease;
+    }
+    .section-card:hover{transform:translateY(-4px)}
+    .section-card.history .icon{color:var(--history)}
+    .section-card.culture .icon{color:var(--culture)}
+    .section-card.science .icon{color:var(--science)}
+    .section-card h3{font-size:18px;margin:12px 0 8px 0;color:#07385a}
+    .section-card p{color:var(--muted);font-size:14px;line-height:1.4}
+    /* Modal de temas */
+    .modal{
+      position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1000;
+      opacity:0;visibility:hidden;transition:opacity 0.3s ease,visibility 0.3s ease;
+    }
+    .modal.active{opacity:1;visibility:visible}
+    .modal-content{
+      background:var(--card);border-radius:16px;width:90%;max-width:800px;max-height:80vh;overflow-y:auto;
+      box-shadow:0 20px 50px rgba(0,0,0,0.3);padding:24px;position:relative;
+    }
+    .close-modal{
+      position:absolute;top:16px;right:16px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b7280
+    }
+    .modal h2{margin:0 0 16px 0;color:#07385a;text-align:center}
+    .topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:16px}
+    .topic-btn{
+      background:linear-gradient(135deg,#f8fafc,#e2e8f0);border:none;border-radius:12px;padding:16px;
+      text-align:left;cursor:pointer;transition:all 0.3s ease;font-weight:600;
+      box-shadow:0 4px 12px rgba(0,0,0,0.05);position:relative;
+    }
+    .topic-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.1);background:linear-gradient(135deg,#f1f5f9,#cbd5e1)}
+    .topic-btn.success::after{content:"✓";position:absolute;top:8px;right:8px;color:var(--success);font-weight:bold;}
+    .topic-btn.warning::after{content:"!";position:absolute;top:8px;right:8px;color:var(--warning);font-weight:bold;}
+    .topic-btn.error::after{content:"✗";position:absolute;top:8px;right:8px;color:var(--error);font-weight:bold;}
+    /* Modal de contenido */
+    .content-modal .modal-content{max-width:900px}
+    .content-modal .content-text{line-height:1.6;margin:16px 0;font-size:15px;color:#1e293b}
+    .content-modal .content-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin: 16px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .content-modal .quiz-btn{display:block;width:200px;margin:24px auto;padding:12px;background:linear-gradient(90deg,var(--accent1),var(--accent3));color:white;border:none;border-radius:10px;font-weight:600;cursor:pointer;font-size:16px}
+    /* Quiz modal */
+    .quiz-modal .question{font-size:18px;margin-bottom:20px;color:#07385a}
+    .quiz-modal .options{display:grid;gap:12px;margin-bottom:24px}
+    .quiz-modal .option{
+      background:#f8fafc;border:2px solid #e2e8f0;border-radius:10px;padding:14px;cursor:pointer;
+      transition:all 0.2s ease;text-align:left;font-weight:500
+    }
+    .quiz-modal .option:hover{border-color:var(--accent1);background:#f0f9ff}
+    .quiz-modal .option.selected{border-color:var(--accent3);background:#f0fdf4}
+    .quiz-modal .feedback{margin:16px 0;padding:12px;border-radius:8px;font-weight:600;text-align:center}
+    .quiz-modal .feedback.correct{background:#f0fdf4;color:#065f46}
+    .quiz-modal .feedback.incorrect{background:#fef2f2;color:#b91c1c}
+    .quiz-modal .next-btn{display:block;width:160px;margin:0 auto;padding:12px;background:var(--accent3);color:white;border:none;border-radius:10px;font-weight:600;cursor:pointer}
+    @media (max-width:768px){
+      .sections{grid-template-columns:1fr}
+      .hero{flex-direction:column;text-align:center}
+      .hero .left{text-align:center}
+      .topics-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div id="loader">
+    <div class="loader-card">
+      <div id="mapa-nic" aria-hidden="true" title="Mapa de Nicaragua">
+        <img src="https://i.postimg.cc/g0zr7JVT/1000000481-removebg-preview.png"
+             alt="Mapa de Nicaragua" 
+             style="width:100%;height:100%;object-fit:contain;border-radius:12px;box-shadow:0 8px 24px rgba(2,6,23,0.18);padding:6px;" />
+      </div>
+    </div>
+    <h1>Exploradores del Saber</h1>
+    <p>Preparando la aventura educativa…</p>
+  </div>
+  <div class="wrap" id="app" style="display:none">
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo">ES</div>
+        <div>
+          <h1>EXPLORADORES DEL SABER</h1>
+          <p>Trivia educativa con IA — Enseña Historia, Cultura y Ciencia</p>
+        </div>
+      </div>
+    </header>
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="left">
+        <h2 id="heroTitle">Aprende y compite en equipos — ¡Explora y descubre!</h2>
+        <p>Selecciona una categoría para explorar temas sobre Nicaragua y luego pon a prueba tus conocimientos con nuestra trivia.</p>
+      </div>
+    </section>
+    <div class="sections">
+      <div class="section-card history" onclick="openTopics('historia')">
+        <div class="icon" style="font-size:48px">⚔️</div>
+        <h3>Historia de Nicaragua</h3>
+        <p>Explora los eventos históricos que han moldeado la identidad nicaragüense desde la época precolombina hasta la actualidad.</p>
+        <button class="btn history">Explorar temas</button>
+      </div>
+      <div class="section-card culture" onclick="openTopics('cultura')">
+        <div class="icon" style="font-size:48px">🎭</div>
+        <h3>Cultura Nicaragüense</h3>
+        <p>Descubre las ricas tradiciones, artes, gastronomía y expresiones culturales que hacen única a Nicaragua.</p>
+        <button class="btn culture">Explorar temas</button>
+      </div>
+      <div class="section-card science" onclick="openTopics('ciencia')">
+        <div class="icon" style="font-size:48px">🔬</div>
+        <h3>Ciencia en Nicaragua</h3>
+        <p>Aprende sobre las investigaciones científicas, innovaciones tecnológicas y estudios ambientales en Nicaragua.</p>
+        <button class="btn science">Explorar temas</button>
+      </div>
+    </div>
+    <footer style="margin-top:28px;color:var(--muted);text-align:center;font-size:13px">
+      © Exploradores del Saber — Material educativo • Demo
+    </footer>
+  </div>
+  <!-- Modal de temas -->
+  <div id="topicsModal" class="modal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('topicsModal')">&times;</button>
+      <h2 id="topicsTitle">Temas de Historia</h2>
+      <div class="topics-grid" id="topicsGrid"></div>
+    </div>
+  </div>
+  <!-- Modal de contenido -->
+  <div id="contentModal" class="modal content-modal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('contentModal')">&times;</button>
+      <h2 id="contentTitle">Título del tema</h2>
+      <img id="contentImage" class="content-image" src="" alt="Imagen del tema">
+      <div class="content-text" id="contentText">Contenido del tema...</div>
+      <button class="quiz-btn" onclick="openQuiz()">Ir a trivia</button>
+    </div>
+  </div>
+  <!-- Modal de quiz -->
+  <div id="quizModal" class="modal quiz-modal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal('quizModal')">&times;</button>
+      <h2>Trivia</h2>
+      <div class="question" id="quizQuestion">Pregunta de ejemplo</div>
+      <div class="options" id="quizOptions"></div>
+      <div class="feedback" id="quizFeedback" style="display:none"></div>
+      <button class="next-btn" id="nextQuestionBtn" style="display:none" onclick="nextQuestion()">Siguiente pregunta</button>
+    </div>
+  </div>
+  <script>
+    // Datos con trivias específicas por tema
+    const data = {
+      historia: {
+        title: "Historia de Nicaragua",
+        topics: [
+          {
+            id: 'pueblos_indigenas', 
+            name: "Pueblos indígenas de Nicaragua antes de la conquista",
+            content: "Antes de la llegada de los españoles, Nicaragua estaba habitada por diversos pueblos indígenas con sus propias culturas y lenguas. Los Chorotegas se asentaron principalmente en el occidente del país y tenían una organización social compleja con centros ceremoniales. Los Nicaraos habitaban en la región del lago Cocibolca y tenían contactos comerciales con otras culturas mesoamericanas. Los Miskitos se establecieron en la Costa Caribe y desarrollaron una cultura adaptada al medio ambiente tropical. Otros grupos incluían a los Matagalpas, Subtiabas y Ulúas, cada uno con características culturales distintivas que enriquecían la diversidad prehispánica del territorio nicaragüense.",
+             
+             quiz: [
+              {
+                question: "¿Qué pueblos indígenas habitaban Nicaragua antes de la conquista?",
+                options: ["Mayas y Aztecas", "Chorotegas, Nicaraos y Miskitos", "Incas y Quechuas", "Tainos y Caribes"],
+                correct: 1
+              },
+              {
+                question: "¿Dónde se asentaron principalmente los Chorotegas?",
+                options: ["Costa Caribe", "Región del lago Cocibolca", "Occidente del país", "Norte de Nicaragua"],
+                correct: 2
+              },
+              {
+                question: "¿Qué caracterizaba a la cultura Miskita?",
+                options: ["Centros ceremoniales complejos", "Contactos comerciales con mesoamérica", "Cultura adaptada al medio ambiente tropical", "Organización feudal"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'conquista', 
+            name: "Llegada de los conquistadores españoles (1522-1524)",
+            content: "La llegada de los conquistadores españoles a Nicaragua ocurrió entre 1522 y 1524. La primera expedición fue liderada por Gil González Dávila en 1522, quien exploró el occidente del país y bautizó a miles de indígenas. En 1524, Francisco Hernández de Córdoba fundó las dos ciudades más importantes del país: Granada, en la ribera del lago Cocibolca, y León, en el occidente. Estas fundaciones marcaron el inicio de la colonización española en el territorio nicaragüense y establecieron las bases para la organización política y administrativa colonial que perduraría durante casi tres siglos.",
+            quiz: [
+              {
+                question: "¿Quién fundó Granada y León en 1524?",
+                options: ["Gil González Dávila", "Francisco Hernández de Córdoba", "Hernán Cortés", "Pedro de Alvarado"],
+                correct: 1
+              },
+              {
+                question: "¿En qué año exploró Gil González Dávila el occidente de Nicaragua?",
+                options: ["1520", "1522", "1524", "1526"],
+                correct: 1
+              },
+              {
+                question: "¿Qué ciudades fundó Francisco Hernández de Córdoba?",
+                options: ["Managua y Estelí", "Granada y León", "Masaya y Jinotepe", "Chinandega y Corinto"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'colonizacion', 
+            name: "Colonización española y sistema de encomiendas",
+            content: "Durante la colonización española, Nicaragua fue organizada bajo el sistema de encomiendas, que consistía en la concesión de grupos de indígenas a colonos españoles a cambio de su protección y evangelización. En la práctica, este sistema se convirtió en una forma de explotación y esclavitud disfrazada, ya que los indígenas eran obligados a trabajar en minas, haciendas y construcciones sin remuneración adecuada. La organización territorial se basó en las dos ciudades principales: Granada y León, que representaban los intereses de los bandos conservador y liberal respectivamente, generando rivalidades que persistirían durante siglos.",
+            quiz: [
+              {
+                question: "¿Qué sistema colonial explotaba a los indígenas?",
+                options: ["Sistema feudal", "Encomiendas", "Feudalismo", "Colonato"],
+                correct: 1
+              },
+              {
+                question: "¿Qué ciudades representaban los bandos políticos?",
+                options: ["Managua y Estelí", "León (liberales) y Granada (conservadores)", "Masaya y Jinotepe", "Chinandega y Corinto"],
+                correct: 1
+              },
+              {
+                question: "¿En qué se convertía el sistema de encomiendas en la práctica?",
+                options: ["Protección real", "Evangelización efectiva", "Explotación y esclavitud disfrazada", "Comercio justo"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'evangelizacion', 
+            name: "Evangelización y el papel de la Iglesia católica",
+            content: "La evangelización y el papel de la Iglesia católica fueron fundamentales durante el período colonial en Nicaragua. Los frailes franciscanos, dominicos y agustinos llegaron con los conquistadores para convertir a los indígenas al cristianismo. La Iglesia no solo tuvo una función religiosa sino también social, educativa y política. Construyó iglesias, conventos y escuelas, y se convirtió en una de las instituciones más poderosas de la colonia. La evangelización implicó la destrucción de templos indígenas y la prohibición de prácticas religiosas nativas, aunque muchas creencias indígenas se mantuvieron de forma clandestina o se fusionaron con elementos católicos, dando origen al sincretismo religioso.",
+            quiz: [
+              {
+                question: "¿Qué religiosos llegaron con los conquistadores?",
+                options: ["Jesuitas y Benedictinos", "Franciscanos, Dominicos y Agustinos", "Luteranos y Calvinistas", "Ortodoxos y Coptos"],
+                correct: 1
+              },
+              {
+                question: "¿Qué implicó la evangelización para las prácticas indígenas?",
+                options: ["Fomento de las prácticas nativas", "Destrución de templos y prohibición de prácticas", "Sincretismo inmediato", "Independencia religiosa"],
+                correct: 1
+              },
+              {
+                question: "¿Qué funciones tuvo la Iglesia además de la religiosa?",
+                options: ["Solo religiosa", "Social, educativa y política", "Militar y económica", "Científica y artística"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'pirateria', 
+            name: "Piratería y ataques a ciudades coloniales",
+            content: "Durante los siglos XVII y XVIII, las ciudades coloniales de Nicaragua, especialmente Granada, sufrieron numerosos ataques de corsarios ingleses y franceses. Estos piratas navegaban por el río San Juan desde el Caribe y atacaban las ciudades del lago Cocibolca para saquear sus riquezas. El más famoso de estos ataques fue el del corsario inglés Henry Morgan en 1665, quien incendió Granada y causó grandes daños materiales. Estos ataques constantes llevaron a la construcción de fortificaciones y a la creación de milicias locales para la defensa de las ciudades, influyendo en el desarrollo urbano y militar de la colonia.",
+            quiz: [
+              {
+                question: "¿Qué corsario atacó Granada en 1665?",
+                options: ["Francis Drake", "Henry Morgan", "Barbanegra", "William Kidd"],
+                correct: 1
+              },
+              {
+                question: "¿Por qué río navegaban los piratas para atacar Granada?",
+                options: ["Río Coco", "Río San Juan", "Río Escondido", "Río Grande de Matagalpa"],
+                correct: 1
+              },
+              {
+                question: "¿Qué consecuencia tuvieron los ataques piratas?",
+                options: ["Despoblación total", "Construcción de fortificaciones y milicias", "Alianza con España", "Abandono de las ciudades"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'independencia_centroamerica', 
+            name: "Independencia de Centroamérica (1821)",
+            content: "La independencia de Centroamérica se proclamó el 15 de septiembre de 1821, cuando las provincias centroamericanas declararon su independencia de España. Nicaragua, como parte de la Capitanía General de Guatemala, se unió a este movimiento independentista. Inmediatamente después de la independencia, las provincias centroamericanas se unieron al Imperio Mexicano de Agustín de Iturbide, aunque esta unión fue breve y controvertida. La independencia marcó el fin del dominio colonial español y el inicio de un período de definición de la identidad nacional y la organización política del nuevo estado nicaragüense.",
+            quiz: [
+              {
+                question: "¿Cuándo se proclamó la independencia de Centroamérica?",
+                options: ["15 de septiembre de 1821", "12 de octubre de 1821", "1 de enero de 1822", "15 de marzo de 1821"],
+                correct: 0
+              },
+              {
+                question: "¿A qué imperio se unieron tras la independencia?",
+                options: ["Imperio Español", "Imperio Inca", "Imperio Mexicano", "Imperio Británico"],
+                correct: 2
+              },
+              {
+                question: "¿Qué marcó el fin del dominio colonial español?",
+                options: ["Batalla de San Jacinto", "Independencia de 1821", "Revolución Sandinista", "Terremoto de 1972"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'separacion_federacion', 
+            name: "Separación de la Federación Centroamericana (1838)",
+            content: "Después de la disolución del Imperio Mexicano en 1823, Nicaragua se unió a la República Federal de Centroamérica junto con Guatemala, El Salvador, Honduras y Costa Rica. Sin embargo, las tensiones políticas internas, especialmente entre liberales y conservadores, y las rivalidades regionales llevaron a la disolución gradual de la federación. En 1838, Nicaragua se separó formalmente de la Federación Centroamericana y se convirtió en una república independiente con su propio gobierno y constitución. Esta separación marcó el inicio de la historia contemporánea de Nicaragua como nación soberana.",
+            quiz: [
+              {
+                question: "¿Cuándo se separó Nicaragua de la Federación Centroamericana?",
+                options: ["1823", "1838", "1841", "1850"],
+                correct: 1
+              },
+              {
+                question: "¿Qué causó la disolución de la federación?",
+                options: ["Invasión extranjera", "Tensiones políticas y rivalidades regionales", "Desastres naturales", "Falta de recursos económicos"],
+                correct: 1
+              },
+              {
+                question: "¿Qué marcó la separación de 1838?",
+                options: ["Fin de la colonia", "Inicio de la historia contemporánea", "Inicio de la dictadura", "Guerra civil"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'conflictos_liberales_conservadores', 
+            name: "Conflictos entre liberales y conservadores",
+            content: "Durante el siglo XIX, Nicaragua estuvo marcada por intensos conflictos políticos entre liberales y conservadores. Los liberales, con base en León, defendían ideas progresistas como la separación de la Iglesia y el Estado, la educación laica y las reformas económicas. Los conservadores, con base en Granada, defendían el orden tradicional, el poder de la Iglesia y el mantenimiento de las estructuras coloniales. Estas rivalidades llevaron a numerosas guerras civiles, cambios de gobierno y una inestabilidad política constante que debilitó al país y facilitó intervenciones extranjeras.",
+            quiz: [
+              {
+                question: "¿Qué ciudades representaban a liberales y conservadores?",
+                options: ["Managua y Estelí", "León (liberales) y Granada (conservadores)", "Masaya y Jinotepe", "Chinandega y Corinto"],
+                correct: 1
+              },
+              {
+                question: "¿Qué defendían los liberales?",
+                options: ["Orden tradicional", "Poder de la Iglesia", "Separación Iglesia-Estado y educación laica", "Mantenimiento de estructuras coloniales"],
+                correct: 2
+              },
+              {
+                question: "¿Qué consecuencia tuvieron estos conflictos?",
+                options: ["Estabilidad política", "Unificación nacional", "Inestabilidad y guerras civiles", "Desarrollo económico"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'guerra_nacional', 
+            name: "La Guerra Nacional (1856-1857)",
+            content: "La Guerra Nacional de 1856-1857 fue un conflicto armado que enfrentó a las fuerzas centroamericanas contra la invasión del filibustero estadounidense William Walker. Walker, con el apoyo de algunos liberales nicaragüenses, tomó el control de Nicaragua en 1855 y se proclamó presidente en 1856. Su intención era establecer un imperio esclavista en Centroamérica. Las fuerzas centroamericanas, lideradas por el costarricense Juan Rafael Mora y el nicaragüense José Dolores Estrada, lograron derrotar a Walker en la batalla de San Jacinto y finalmente expulsarlo del país en 1857. Esta guerra se convirtió en un símbolo de la identidad nacional y la soberanía centroamericana.",
+            quiz: [
+              {
+                question: "¿Contra quién lucharon en la Guerra Nacional?",
+                options: ["España", "México", "William Walker", "Inglaterra"],
+                correct: 2
+              },
+              {
+                question: "¿Qué intención tenía William Walker?",
+                options: ["Liberar a Nicaragua", "Establecer un imperio esclavista", "Promover la democracia", "Fomentar el comercio"],
+                correct: 1
+              },
+              {
+                question: "¿En qué batalla se derrotó a Walker?",
+                options: ["Batalla de Masaya", "Batalla de Granada", "Batalla de San Jacinto", "Batalla de León"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'consolidacion_republica', 
+            name: "Consolidación de la República (finales del siglo XIX)",
+            content: "A finales del siglo XIX, Nicaragua experimentó un período de relativa estabilidad política y económica conocido como la Consolidación de la República. Durante este período, se crearon instituciones estatales modernas, se promovió la apertura económica y se desarrollaron infraestructuras como ferrocarriles y puertos. El gobierno de José Santos Zelaya (1893-1909) impulsó reformas liberales, incluyendo la separación de la Iglesia y el Estado, la educación laica y la modernización del estado. Sin embargo, este período también estuvo marcado por la represión política y la concentración del poder, lo que generó oposición interna y tensiones con Estados Unidos.",
+            quiz: [
+              {
+                question: "¿Qué presidente impulsó reformas liberales a finales del siglo XIX?",
+                options: ["José Santos Zelaya", "Adolfo Díaz", "Emiliano Chamorro", "Juan Bautista Sacasa"],
+                correct: 0
+              },
+              {
+                question: "¿Qué reformas impulsó Zelaya?",
+                options: ["Restauración del poder eclesiástico", "Separación Iglesia-Estado y educación laica", "Cierre de fronteras", "Alianza con España"],
+                correct: 1
+              },
+              {
+                question: "¿Qué se desarrolló durante este período?",
+                options: ["Guerras civiles constantes", "Infraestructuras como ferrocarriles y puertos", "Aislamiento internacional", "Dictadura militar"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'intervencion_estados_unidos', 
+            name: "Intervención militar de Estados Unidos (1912-1933)",
+            content: "Entre 1912 y 1933, Estados Unidos realizó una intervención militar en Nicaragua con el pretexto de proteger sus intereses económicos y mantener la estabilidad política. Las tropas estadounidenses ocuparon el país y controlaron aspectos clave de la administración, incluyendo las finanzas y la seguridad. Esta intervención generó un fuerte sentimiento antiimperialista entre la población nicaragüense y provocó el surgimiento de movimientos de resistencia. La ocupación estadounidense fue uno de los períodos más controvertidos de la historia nicaragüense y tuvo consecuencias duraderas en las relaciones entre ambos países.",
+            quiz: [
+              {
+                question: "¿Cuánto duró la intervención militar de EE.UU.?",
+                options: ["1909-1912", "1912-1933", "1927-1934", "1936-1979"],
+                correct: 1
+              },
+              {
+                question: "¿Qué controlaron las tropas estadounidenses?",
+                options: ["Solo la seguridad", "Solo las finanzas", "Finanzas y seguridad", "Educación y salud"],
+                correct: 2
+              },
+              {
+                question: "¿Qué sentimiento generó la intervención?",
+                options: ["Pro-imperialista", "Antiimperialista", "Indiferente", "Colaborador"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'lucha_sandino', 
+            name: "La lucha de Augusto C. Sandino (1927-1934)",
+            content: "La lucha de Augusto César Sandino entre 1927 y 1934 fue una guerrilla antiimperialista contra la intervención militar estadounidense en Nicaragua. Sandino, un nacionalista y antiimperialista, lideró un ejército de campesinos conocido como el Ejército Defensor de la Soberanía Nacional de Nicaragua. Desde las montañas de las Segovias, Sandino resistió tanto a las tropas estadounidenses como al gobierno títere que apoyaban. Su lucha se convirtió en un símbolo de la soberanía nacional y la resistencia antiimperialista en América Latina. Sandino fue asesinado en 1934 por orden de Anastasio Somoza García, lo que marcó el fin de la resistencia armada pero consolidó su legado como héroe nacional.",
+            quiz: [
+              {
+                question: "¿Qué líder antiimperialista luchó contra EE.UU.?",
+                options: ["José Santos Zelaya", "Augusto C. Sandino", "Anastasio Somoza", "Violeta Chamorro"],
+                correct: 1
+              },
+              {
+                question: "¿Cómo se llamaba su ejército?",
+                options: ["Ejército Nacional", "Guardia Nacional", "Ejército Defensor de la Soberanía Nacional", "Frente Sandinista"],
+                correct: 2
+              },
+              {
+                question: "¿Quién ordenó el asesinato de Sandino?",
+                options: ["José Santos Zelaya", "Juan Bautista Sacasa", "Anastasio Somoza García", "Adolfo Díaz"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'guardia_nacional', 
+            name: "Creación y ascenso de la Guardia Nacional",
+            content: "La Guardia Nacional fue creada durante la ocupación estadounidense en Nicaragua como una fuerza de seguridad entrenada y financiada por Estados Unidos. Originalmente concebida como una institución para mantener el orden público, la Guardia Nacional fue comandada por Anastasio Somoza García, quien la utilizó como instrumento de poder personal. Después del asesinato de Sandino en 1934, la Guardia Nacional se convirtió en la principal fuerza militar y policial del país, y Somoza utilizó su control sobre esta institución para consolidar su poder político y establecer una dictadura familiar que duraría más de cuatro décadas.",
+            quiz: [
+              {
+                question: "¿Quién comandaba la Guardia Nacional?",
+                options: ["José Santos Zelaya", "Augusto C. Sandino", "Anastasio Somoza García", "Daniel Ortega"],
+                correct: 2
+              },
+              {
+                question: "¿Quién entrenó y financió la Guardia Nacional?",
+                options: ["España", "México", "Estados Unidos", "Inglaterra"],
+                correct: 2
+              },
+              {
+                question: "¿Cómo utilizó Somoza la Guardia Nacional?",
+                options: ["Para mantener el orden público", "Como instrumento de poder personal", "Para luchar contra invasores", "Para promover la democracia"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'dictadura_somoza', 
+            name: "Dictadura de la familia Somoza (1936-1979)",
+            content: "La dictadura de la familia Somoza gobernó Nicaragua desde 1936 hasta 1979, controlando el país de manera autoritaria durante más de cuatro décadas. Anastasio Somoza García (1936-1956), Luis Somoza Debayle (1956-1967) y Anastasio Somoza Debayle (1967-1979) sucedieron en el poder, manteniendo un régimen caracterizado por la represión política, la corrupción, la concentración de la riqueza y la dependencia de Estados Unidos. La familia Somoza controlaba los sectores económicos más importantes del país y utilizaba la Guardia Nacional para reprimir cualquier oposición. Esta dictadura generó un profundo descontento social que finalmente condujo a la Revolución Sandinista.",
+            quiz: [
+              {
+                question: "¿Cuánto duró la dictadura somocista?",
+                options: ["1936-1979", "1934-1979", "1936-1980", "1940-1979"],
+                correct: 0
+              },
+              {
+                question: "¿Qué caracterizaba al régimen somocista?",
+                options: ["Democracia y libertad", "Represión, corrupción y concentración de riqueza", "Igualdad social", "Independencia económica"],
+                correct: 1
+              },
+              {
+                question: "¿Qué condujo finalmente a la dictadura?",
+                options: ["Apoyo popular", "Descontento social y Revolución Sandinista", "Intervención extranjera", "Crisis económica internacional"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'terremoto_managua', 
+            name: "El terremoto de Managua (1972)",
+            content: "El terremoto de Managua del 23 de diciembre de 1972 fue uno de los desastres naturales más devastadores de la historia de Nicaragua. El sismo, de magnitud 6.2 en la escala Richter, destruyó el 90% del centro de la capital, dejando más de 10,000 muertos y cientos de miles de damnificados. La respuesta del gobierno de Anastasio Somoza Debayle fue ampliamente criticada por la corrupción en la distribución de la ayuda internacional y la especulación con los terrenos afectados. Este desastre agravó la crisis social y política del país, aumentando el descontento popular contra la dictadura y contribuyendo al fortalecimiento del Frente Sandinista de Liberación Nacional (FSLN).",
+            quiz: [
+              {
+                question: "¿Cuándo ocurrió el terremoto de Managua?",
+                options: ["1970", "1972", "1974", "1976"],
+                correct: 1
+              },
+              {
+                question: "¿Qué magnitud tuvo el sismo?",
+                options: ["5.5", "6.2", "7.0", "8.1"],
+                correct: 1
+              },
+              {
+                question: "¿Qué consecuencia política tuvo el terremoto?",
+                options: ["Fortalecimiento de la dictadura", "Aumento del descontento y fortalecimiento del FSLN", "Intervención extranjera directa", "Elecciones anticipadas"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'revolucion_sandinista', 
+            name: "Revolución Sandinista (1979)",
+            content: "La Revolución Sandinista de 1979 fue el movimiento armado que derrocó a la dictadura de Anastasio Somoza Debayle el 19 de julio de 1979. Liderado por el Frente Sandinista de Liberación Nacional (FSLN), la revolución contó con el apoyo de amplios sectores de la población, incluyendo estudiantes, campesinos, obreros, intelectuales y la Iglesia católica. Después de años de lucha guerrillera y movilización popular, las fuerzas sandinistas entraron triunfantes en Managua, poniendo fin a 43 años de dictadura somocista. La revolución marcó un punto de inflexión en la historia contemporánea de Nicaragua y tuvo un impacto significativo en la política latinoamericana durante la Guerra Fría.",
+            quiz: [
+              {
+                question: "¿Cuándo triunfó la Revolución Sandinista?",
+                options: ["19 de julio de 1978", "19 de julio de 1979", "23 de diciembre de 1972", "25 de febrero de 1979"],
+                correct: 1
+              },
+              {
+                question: "¿Qué organización lideró la revolución?",
+                options: ["Guardia Nacional", "Partido Liberal", "Frente Sandinista de Liberación Nacional (FSLN)", "Unión Nacional Opositora"],
+                correct: 2
+              },
+              {
+                question: "¿A cuántos años de dictadura puso fin?",
+                options: ["30 años", "43 años", "50 años", "25 años"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'guerra_contras', 
+            name: "Guerra de los Contras (década de 1980)",
+            content: "La Guerra de los Contras durante la década de 1980 fue un conflicto armado que enfrentó al gobierno sandinista con fuerzas opositoras conocidas como 'contras', financiadas y entrenadas por Estados Unidos. Este conflicto fue parte de la Guerra Fría, donde Nicaragua se convirtió en un escenario de confrontación entre el bloque soviético (que apoyaba al gobierno sandinista) y Estados Unidos (que apoyaba a los contras). La guerra causó decenas de miles de muertes, destrucción de infraestructura y una grave crisis económica. El conflicto terminó con las elecciones de 1990, cuando el gobierno sandinista aceptó participar en un proceso electoral supervisado internacionalmente.",
+            quiz: [
+              {
+                question: "¿Quién financiaba a los contras en los 80?",
+                options: ["Unión Soviética", "Cuba", "Estados Unidos", "Venezuela"],
+                correct: 2
+              },
+              {
+                question: "¿En qué contexto global ocurrió esta guerra?",
+                options: ["Segunda Guerra Mundial", "Guerra Fría", "Guerra del Golfo", "Revolución Cubana"],
+                correct: 1
+              },
+              {
+                question: "¿Cómo terminó el conflicto?",
+                options: ["Victoria militar sandinista", "Intervención de la ONU", "Elecciones de 1990", "Acuerdo de paz unilateral"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'elecciones_1990', 
+            name: "Elecciones de 1990 y el gobierno de Violeta Barrios de Chamorro",
+            content: "Las elecciones de 1990 marcaron una transición democrática histórica en Nicaragua, ya que por primera vez en América Latina un gobierno revolucionario aceptó entregar el poder tras perder unas elecciones. Violeta Barrios de Chamorro, viuda del periodista asesinado Pedro Joaquín Chamorro y candidata de la Unión Nacional Opositora (UNO), ganó las elecciones contra el presidente sandinista Daniel Ortega. Su gobierno (1990-1997) se caracterizó por la reconciliación nacional, la desmovilización de los ejércitos, la estabilización económica y la restauración de las relaciones con Estados Unidos y la comunidad internacional. Chamorro fue la primera mujer presidenta de Nicaragua y una de las primeras en América Latina.",
+            quiz: [
+              {
+                question: "¿Quién ganó las elecciones de 1990?",
+                options: ["Daniel Ortega", "Arnoldo Alemán", "Violeta Barrios de Chamorro", "Enrique Bolaños"],
+                correct: 2
+              },
+              {
+                question: "¿Qué hizo histórico a estas elecciones?",
+                options: ["Primera elección en Nicaragua", "Gobierno revolucionario entregó el poder tras perder", "Intervención extranjera", "Voto obligatorio"],
+                correct: 1
+              },
+              {
+                question: "¿Qué caracterizó su gobierno?",
+                options: ["Continuación de la guerra", "Reconciliación nacional y desmovilización", "Nacionalización de empresas", "Aislamiento internacional"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'reformas_90_2000', 
+            name: "Reformas políticas y económicas de los años 90 y 2000",
+            content: "Durante los años 90 y 2000, Nicaragua implementó importantes reformas políticas y económicas como parte de su transición democrática. Las reformas políticas incluyeron la consolidación del sistema multipartidista, la profesionalización de las fuerzas armadas y la creación de instituciones democráticas como el Consejo Supremo Electoral. Las reformas económicas se centraron en la privatización de empresas estatales, la apertura económica al comercio internacional, la estabilización macroeconómica y la atracción de inversión extranjera. Estas reformas, aunque generaron crecimiento económico, también aumentaron la desigualdad social y generaron críticas por su impacto en los sectores más vulnerables de la población.",
+            quiz: [
+              {
+                question: "¿Qué reformas se implementaron en los 90?",
+                options: ["Socialistas y colectivistas", "Privatización y apertura económica", "Nacionalización y cierre comercial", "Feudalismo y monarquía"],
+                correct: 1
+              },
+              {
+                question: "¿Qué reformas políticas se consolidaron?",
+                options: ["Dictadura militar", "Sistema multipartidista y profesionalización del ejército", "Gobierno centralizado", "Eliminación de elecciones"],
+                correct: 1
+              },
+              {
+                question: "¿Qué consecuencia tuvieron las reformas económicas?",
+                options: ["Reducción de la desigualdad", "Crecimiento económico pero aumento de la desigualdad", "Estancamiento total", "Dependencia exclusiva del estado"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'retorno_sandinismo', 
+            name: "Retorno del sandinismo al poder (2007–presente)",
+            content: "El retorno del sandinismo al poder en 2007 con la presidencia de Daniel Ortega marcó un nuevo capítulo en la historia contemporánea de Nicaragua. Ortega, líder de la revolución sandinista en 1979, regresó al poder después de perder las elecciones de 1990 y 1996. Su gobierno ha sido caracterizado por la concentración del poder, el control de las instituciones del Estado, las alianzas estratégicas con Venezuela y otros países, y la implementación de programas sociales. Sin embargo, su régimen ha generado intensos debates sobre la calidad de la democracia, los derechos humanos y la libertad de expresión, especialmente después de la crisis sociopolítica de 2018 que provocó cientos de muertes y una ola de migración.",
+            quiz: [
+              {
+                question: "¿Cuándo retornó Ortega al poder?",
+                options: ["2006", "2007", "2008", "2005"],
+                correct: 1
+              },
+              {
+                question: "¿Qué caracteriza su gobierno actual?",
+                options: ["Plena democracia y libertad de prensa", "Concentración del poder y control de instituciones", "Aislamiento internacional total", "Economía completamente liberal"],
+                correct: 1
+              },
+              {
+                question: "¿Qué evento provocó una crisis en 2018?",
+                options: ["Terremoto", "Huracán", "Crisis sociopolítica", "Crisis económica internacional"],
+                correct: 2
+              }
+            ]
+          }
+        ]
+      },
+      cultura: {
+        title: "Cultura Nicaragüense",
+        topics: [
+          {
+            id: 'folclore', 
+            name: "Folclore nicaragüense",
+            content: "El folclore nicaragüense está lleno de leyendas, mitos y cuentos populares que forman parte de la identidad cultural. Entre las leyendas más conocidas están 'La Carreta Nagua', que narra la historia de una carreta fantasma que aparece en las noches arrastrada por bueyes esqueléticos, y 'La Cegua', una figura femenina con cara de caballo que castiga a los hombres irresponsables. Estas historias se transmiten oralmente de generación en generación y reflejan las creencias y valores de las comunidades nicaragüenses, mezclando elementos indígenas, españoles y africanos.",
+            quiz: [
+              {
+                question: "¿Qué leyenda nicaragüense trata sobre una carreta fantasma?",
+                options: ["La Cegua", "El Cadejo", "La Carreta Nagua", "La Llorona"],
+                correct: 2
+              },
+              {
+                question: "¿Qué castiga 'La Cegua'?",
+                options: ["La mentira", "La irresponsabilidad masculina", "La avaricia", "La traición"],
+                correct: 1
+              },
+              {
+                question: "¿Qué elementos culturales se mezclan en el folclore?",
+                options: ["Solo indígenas", "Indígenas, españoles y africanos", "Solo españoles", "Europeos y asiáticos"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'fiestas', 
+            name: "Fiestas patronales",
+            content: "Las fiestas patronales son celebraciones religiosas muy importantes en Nicaragua. Destacan las fiestas de Santo Domingo de Guzmán en Managua, donde miles de personas participan en la 'bajada del santo' y recorren las calles en procesión, y las fiestas de San Sebastián en Diriamba, conocidas por sus bailes folclóricos y actividades culturales. Estas celebraciones combinan devoción religiosa con expresiones culturales populares, mostrando la profunda fe y tradición de las comunidades nicaragüenses.",
+            quiz: [
+              {
+                question: "¿Dónde se celebran las fiestas de Santo Domingo?",
+                options: ["León", "Granada", "Managua", "Masaya"],
+                correct: 2
+              },
+              {
+                question: "¿Qué son las fiestas de San Sebastián conocidas por?",
+                options: ["Procesiones marítimas", "Bailes folclóricos", "Fuegos artificiales", "Comidas típicas"],
+                correct: 1
+              },
+              {
+                question: "¿Qué combinan estas fiestas?",
+                options: ["Solo religión", "Religión y cultura popular", "Solo cultura", "Política y religión"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'griteria', 
+            name: "La Gritería y la Purísima",
+            content: "La Gritería y la Purísima son tradiciones únicas dedicadas a la Inmaculada Concepción de María, celebradas cada 7 de diciembre. Durante esta festividad, las personas visitan altares montados en casas y templos, cantando '¿Quién causa tanta alegría? ¡La Concepción de María!' y recibiendo aguinaldos como golosinas, frutas y juguetes. Esta tradición, que data del siglo XVII, es una de las manifestaciones religiosas más importantes de Nicaragua y muestra el profundo sincretismo entre creencias católicas e indígenas.",
+            quiz: [
+              {
+                question: "¿Cuándo se celebra la Gritería?",
+                options: ["7 de diciembre", "15 de septiembre", "12 de octubre", "8 de diciembre"],
+                correct: 0
+              },
+              {
+                question: "¿Qué se recibe durante la Gritería?",
+                options: ["Dinero", "Bendiciones", "Aguinaldos (golosinas, frutas, juguetes)", "Flores"],
+                correct: 2
+              },
+              {
+                question: "¿Qué muestra esta tradición?",
+                options: ["Solo catolicismo", "Sincretismo católico-indígena", "Solo tradiciones indígenas", "Influencia protestante"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'poesia', 
+            name: "Poesía nicaragüense",
+            content: "La poesía nicaragüense alcanzó su máximo esplendor con Rubén Darío, figura cumbre del modernismo literario y considerado el poeta más importante de América Latina. Su obra revolucionó la poesía en español con innovaciones métricas, rítmicas y temáticas. Además de Darío, otros poetas destacados incluyen a Alfonso Cortés, Salomón de la Selva, Pablo Antonio Cuadra y Ernesto Cardenal, quienes han contribuido significativamente al desarrollo literario del país con sus distintas corrientes poéticas.",
+            quiz: [
+              {
+                question: "¿Quién es el máximo exponente del modernismo en la poesía nicaragüense?",
+                options: ["Pablo Antonio Cuadra", "Rubén Darío", "Ernesto Cardenal", "Salomón de la Selva"],
+                correct: 1
+              },
+              {
+                question: "¿Qué revolucionó la obra de Rubén Darío?",
+                options: ["La narrativa", "La poesía en español", "El teatro", "La pintura"],
+                correct: 1
+              },
+              {
+                question: "¿Qué otros poetas son destacados?",
+                options: ["Solo Rubén Darío", "Alfonso Cortés, Salomón de la Selva, Pablo Antonio Cuadra", "Autores contemporáneos exclusivamente", "Poetas extranjeros"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'musica', 
+            name: "Música tradicional",
+            content: "La música tradicional nicaragüense incluye diversos géneros que reflejan la diversidad cultural del país. El son nica es un género popular con influencias españolas y africanas. El palo de mayo es una celebración musical y dancística de la Costa Caribe con raíces afrocaribeñas. La marimba, instrumento de percusión de origen africano, es emblemático en las celebraciones populares. Estos géneros musicales se caracterizan por sus ritmos contagiosos, instrumentación tradicional y letras que narran la vida cotidiana y las tradiciones nicaragüenses.",
+            quiz: [
+              {
+                question: "¿Qué instrumento es emblemático en la música tradicional?",
+                options: ["Guitarra", "Marimba", "Violín", "Flauta"],
+                correct: 1
+              },
+              {
+                question: "¿De dónde es el palo de mayo?",
+                options: ["Occidente de Nicaragua", "Costa Caribe", "Norte de Nicaragua", "Centro del país"],
+                correct: 1
+              },
+              {
+                question: "¿Qué influencias tiene el son nica?",
+                options: ["Solo españolas", "Españolas y africanas", "Solo africanas", "Indígenas y asiáticas"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'gastronomia', 
+            name: "Gastronomía típica",
+            content: "La gastronomía típica nicaragüense ofrece platos sabrosos y nutritivos que reflejan la mezcla de culturas indígena, española y africana. El gallo pinto, hecho de arroz y frijoles, es el plato nacional consumido principalmente en el desayuno. El nacatamal es un tamal elaborado con masa de maíz, carne de cerdo, arroz, papas y especias, envuelto en hoja de plátano. El indio viejo es un guiso de carne con chiltoma (tomate y cebolla) y especias. El vigorón consiste en yuca cocida, chicharrón de cerdo y ensalada de repollo curtido. Estos platos son fundamentales en la identidad culinaria del país.",
+            quiz: [
+              {
+                question: "¿Cuál es un plato típico nicaragüense?",
+                options: ["Gallo pinto", "Pupusas", "Tamales", "Ceviche"],
+                correct: 0
+              },
+              {
+                question: "¿Qué contiene el nacatamal?",
+                options: ["Solo carne", "Masa de maíz, carne, arroz, papas, especias", "Solo vegetales", "Pescado y coco"],
+                correct: 1
+              },
+              {
+                question: "¿Qué es el vigorón?",
+                options: ["Sopa de frijoles", "Yuca, chicharrón y ensalada de repollo", "Arroz con pollo", "Tamal de elote"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'danzas', 
+            name: "Danzas folclóricas",
+            content: "Las danzas folclóricas nicaragüenses son expresiones artísticas que combinan música, vestuario y coreografía para narrar historias y tradiciones. El Toro Huaco es una danza que representa la cacería de un toro salvaje, con máscaras coloridas y trajes elaborados. El Güegüense es una obra teatral-dancística colonial que combina elementos indígenas y españoles, satirizando la autoridad colonial. Esta última fue declarada Patrimonio Oral e Intangible de la Humanidad por la UNESCO en 2005, reconociendo su importancia cultural y su valor como testimonio de la resistencia indígena.",
+            quiz: [
+              {
+                question: "¿Qué danza folclórica es Patrimonio de la Humanidad por la UNESCO?",
+                options: ["Toro Huaco", "Güegüense", "Palo de Mayo", "El Viejo y la Vieja"],
+                correct: 1
+              },
+              {
+                question: "¿Qué representa el Toro Huaco?",
+                options: ["Celebración religiosa", "Cacería de un toro salvaje", "Llegada de los españoles", "Fiesta de la cosecha"],
+                correct: 1
+              },
+              {
+                question: "¿Qué hace el Güegüense?",
+                options: ["Celebra la independencia", "Satiriza la autoridad colonial", "Honra a los dioses indígenas", "Narra la conquista"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'artesanias', 
+            name: "Arte popular y artesanía",
+            content: "El arte popular y la artesanía nicaragüense muestran la creatividad y habilidad de sus artesanos. La cerámica de San Juan de Oriente es famosa por sus diseños policromados y técnicas ancestrales. Las hamacas de Masaya son reconocidas por su calidad y durabilidad, tejidas a mano con fibras naturales. Los tallados en madera incluyen figuras religiosas, animales y objetos decorativos que reflejan la rica tradición artesanal del país. Estas artesanías no solo tienen valor estético sino que también preservan técnicas y conocimientos tradicionales transmitidos de generación en generación.",
+            quiz: [
+              {
+                question: "¿Qué ciudad es famosa por sus hamacas?",
+                options: ["León", "Granada", "Masaya", "Diriamba"],
+                correct: 2
+              },
+              {
+                question: "¿Qué es famosa la cerámica de San Juan de Oriente por?",
+                options: ["Su color blanco", "Sus diseños policromados", "Su tamaño pequeño", "Su uso exclusivo religioso"],
+                correct: 1
+              },
+              {
+                question: "¿Qué preservan las artesanías?",
+                options: ["Solo valor estético", "Técnicas y conocimientos tradicionales", "Solo para turistas", "Materiales modernos"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'teatro', 
+            name: "Teatro y tradiciones escénicas",
+            content: "El teatro y las tradiciones escénicas nicaragüenses tienen una rica historia que se remonta al período colonial. El Güegüense es el ejemplo más destacado de teatro colonial indígena, una obra satírica que data del siglo XVII y que combina elementos de la cultura indígena con la española. Esta obra utiliza el disfraz, la ironía y el doble sentido para criticar la autoridad colonial. Además del Güegüense, existen otras manifestaciones teatrales populares como las pastorelas, los bailes de los diablitos y las representaciones religiosas que forman parte del patrimonio cultural inmaterial del país.",
+            quiz: [
+              {
+                question: "¿Qué obra es el ejemplo más destacado de teatro colonial?",
+                options: ["La Carreta Nagua", "El Güegüense", "El Toro Huaco", "La Pastorela"],
+                correct: 1
+              },
+              {
+                question: "¿Qué usa el Güegüense para criticar?",
+                options: ["Violencia", "Disfraz, ironía y doble sentido", "Música triste", "Silencio"],
+                correct: 1
+              },
+              {
+                question: "¿De qué siglo data el Güegüense?",
+                options: ["Siglo XV", "Siglo XVI", "Siglo XVII", "Siglo XVIII"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'lenguas', 
+            name: "Lenguas indígenas y afrodescendientes",
+            content: "Nicaragua es un país multicultural con diversas lenguas indígenas y afrodescendientes que enriquecen su patrimonio lingüístico. El Miskito se habla en la Costa Caribe Norte, el Mayagna (Sumo) en comunidades del río Coco, y el Rama en la Costa Caribe Sur. Las lenguas afrodescendientes incluyen el Creole (inglés criollo) y el Garífuna, habladas por comunidades afrocaribeñas. Estas lenguas no solo son medios de comunicación sino que también contienen conocimientos tradicionales, cosmovisiones y formas de entender el mundo que son fundamentales para la identidad cultural de sus pueblos.",
+            quiz: [
+              {
+                question: "¿Qué lenguas se hablan en la Costa Caribe?",
+                options: ["Español y Náhuatl", "Miskito y Creole", "Quechua y Aymara", "Guaraní y Tupí"],
+                correct: 1
+              },
+              {
+                question: "¿Dónde se habla el Mayagna?",
+                options: ["Costa Caribe Sur", "Occidente", "Comunidades del río Coco", "Centro del país"],
+                correct: 2
+              },
+              {
+                question: "¿Qué contienen estas lenguas además de ser medios de comunicación?",
+                options: ["Solo palabras", "Conocimientos tradicionales y cosmovisiones", "Reglas gramaticales complejas", "Historias de ficción"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'arquitectura', 
+            name: "Arquitectura colonial",
+            content: "La arquitectura colonial nicaragüense se concentra principalmente en las ciudades de León y Granada, fundadas en el siglo XVI. Estas ciudades conservan iglesias, conventos y casas antiguas que muestran la influencia del estilo barroco español adaptado al clima tropical. La Catedral de León, declarada Patrimonio de la Humanidad por la UNESCO, es el edificio religioso más grande de Centroamérica. Las casas coloniales se caracterizan por sus patios interiores, balcones de madera, techos de teja y paredes gruesas que proporcionan frescura. Esta arquitectura es testimonio del pasado colonial y un atractivo turístico importante.",
+            quiz: [
+              {
+                question: "¿En qué ciudades se concentra la arquitectura colonial?",
+                options: ["Managua y Estelí", "León y Granada", "Masaya y Jinotepe", "Chinandega y Corinto"],
+                correct: 1
+              },
+              {
+                question: "¿Qué es la Catedral de León?",
+                options: ["Edificio religioso más grande de Centroamérica", "Museo de arte", "Palacio presidencial antiguo", "Fortaleza militar"],
+                correct: 0
+              },
+              {
+                question: "¿Qué caracteriza a las casas coloniales?",
+                options: ["Techos de metal", "Paredes delgadas", "Patios interiores y balcones de madera", "Construcción moderna"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'sincretismo', 
+            name: "Sincretismo religioso",
+            content: "El sincretismo religioso en Nicaragua es la mezcla de creencias católicas e indígenas que se manifiesta en ritos y festividades populares. Esta fusión se observa en celebraciones como la Gritería, donde elementos prehispánicos se combinan con la devoción mariana, o en las fiestas patronales donde se incorporan danzas y rituales indígenas. Las comunidades indígenas mantienen sus propias prácticas espirituales mientras adoptan elementos del catolicismo, creando formas únicas de expresión religiosa que reflejan la compleja historia cultural del país y la capacidad de adaptación de sus pueblos originarios.",
+            quiz: [
+              {
+                question: "¿Qué es el sincretismo religioso?",
+                options: ["Separación total de religiones", "Mezcla de creencias católicas e indígenas", "Solo práctica del catolicismo", "Solo práctica de religiones indígenas"],
+                correct: 1
+              },
+              {
+                question: "¿En qué celebración se observa este sincretismo?",
+                options: ["Solo en Navidad", "En la Gritería y fiestas patronales", "Solo en Semana Santa", "En eventos políticos"],
+                correct: 1
+              },
+              {
+                question: "¿Qué crean las comunidades indígenas con esta mezcla?",
+                options: ["Confusión religiosa", "Formas únicas de expresión religiosa", "Abandono total de sus creencias", "Aislamiento cultural"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'mujer', 
+            name: "Papel de la mujer en la cultura",
+            content: "El papel de la mujer en la cultura nicaragüense ha evolucionado significativamente desde la figura tradicional de la madre y cuidadora hasta convertirse en artistas, escritoras, líderes sociales y políticas influyentes. Históricamente, las mujeres han sido guardianas de las tradiciones familiares y comunitarias, transmitiendo conocimientos culinarios, artesanales y culturales. En la actualidad, mujeres como Gioconda Belli (escritora), Katia D'Artigues (socióloga), y muchas artistas, activistas y profesionales contribuyen al desarrollo cultural, social y político del país, desafiando roles tradicionales y promoviendo la igualdad de género.",
+            quiz: [
+              {
+                question: "¿Quién fue la primera mujer presidenta de Nicaragua?",
+                options: ["Violeta Barrios de Chamorro", "Gioconda Belli", "Dora María Téllez", "María Luisa Argüello"],
+                correct: 0
+              },
+              {
+                question: "¿Qué han sido históricamente las mujeres en la cultura?",
+                options: ["Excluidas totalmente", "Guardianas de tradiciones familiares y comunitarias", "Solo artistas", "Solo políticas"],
+                correct: 1
+              },
+              {
+                question: "¿Qué hacen las mujeres actualmente?",
+                options: ["Mantienen roles tradicionales exclusivamente", "Contribuyen al desarrollo cultural, social y político", "Se enfocan solo en la familia", "No participan en la vida pública"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'caribe', 
+            name: "Identidad caribeña nicaragüense",
+            content: "La identidad caribeña nicaragüense se refiere a las influencias culturales de las comunidades de la Costa Caribe, que incluyen pueblos indígenas (Miskito, Mayagna, Rama) y afrodescendientes (Creole, Garífuna). Esta región tiene una cultura distinta al resto del país, con lenguas propias, música, gastronomía, religión y formas de organización social. La influencia afrocaribeña se manifiesta en géneros musicales como el palo de mayo, la gastronomía basada en coco y pescado, y tradiciones como el Día de San Vicente. Esta diversidad cultural enriquece la identidad nacional y representa la multiculturalidad de Nicaragua.",
+            quiz: [
+              {
+                question: "¿Qué pueblos forman la identidad caribeña?",
+                options: ["Solo mestizos", "Indígenas y afrodescendientes", "Solo españoles", "Solo afrodescendientes"],
+                correct: 1
+              },
+              {
+                question: "¿Qué caracteriza la gastronomía caribeña?",
+                options: ["Arroz y frijoles", "Coco y pescado", "Carne de res", "Maíz y frijoles"],
+                correct: 1
+              },
+              {
+                question: "¿Qué género musical es afrocaribeño?",
+                options: ["Son nica", "Palo de mayo", "Marimba", "Folclore central"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'contemporanea', 
+            name: "Cine y literatura contemporánea",
+            content: "El cine y la literatura contemporánea nicaragüense exploran la realidad del país a través de diversas perspectivas. Autores contemporáneos como Sergio Ramírez (Premio Cervantes 2017), Rosario Aguilar y Carlos Fonseca han abordado temas históricos, sociales y políticos en sus obras. En el cine, documentales como 'La Yuma' de Florence Jaugey y producciones recientes exploran temas como la violencia juvenil, la identidad, la memoria histórica y los desafíos sociales actuales. Estas expresiones artísticas contemporáneas contribuyen al diálogo nacional y a la reflexión sobre la identidad y el futuro del país.",
+            quiz: [
+              {
+                question: "¿Qué autor nicaragüense ganó el Premio Cervantes?",
+                options: ["Rubén Darío", "Pablo Antonio Cuadra", "Sergio Ramírez", "Ernesto Cardenal"],
+                correct: 2
+              },
+              {
+                question: "¿Qué temas explora el cine contemporáneo?",
+                options: ["Solo ficción histórica", "Violencia juvenil, identidad, memoria histórica", "Solo comedia", "Aventuras extranjeras"],
+                correct: 1
+              },
+              {
+                question: "¿Qué documental es mencionado?",
+                options: ["Managua, mi ciudad", "La Yuma", "Nicaragua en la mira", "Historias del Caribe"],
+                correct: 1
+              }
+            ]
+          }
+        ]
+      },
+      ciencia: {
+        title: "Ciencia en Nicaragua",
+        topics: [
+          {
+            id: 'geologia', 
+            name: "Investigación volcánica y sísmica",
+            content: "Nicaragua forma parte del 'Cinturón de Fuego del Pacífico', una zona de alta actividad sísmica y volcánica que rodea el Océano Pacífico. El Instituto Nicaragüense de Estudios Territoriales (INETER) realiza monitoreos constantes sobre volcanes y terremotos para prevenir desastres naturales y proteger a la población. El país cuenta con numerosos volcanes activos como el Momotombo, San Cristóbal, Concepción, Telica y Masaya, que son objeto de estudio científico continuo para entender mejor los procesos geológicos de la región y desarrollar sistemas de alerta temprana.",
+            quiz: [
+              {
+                question: "¿Qué instituto monitorea la actividad volcánica y sísmica en Nicaragua?",
+                options: ["MARENA", "INETER", "INTA", "UNAN"],
+                correct: 1
+              },
+              {
+                question: "¿A qué 'cinturón' pertenece Nicaragua?",
+                options: ["Cinturón de asteroides", "Cinturón de Fuego del Pacífico", "Cinturón ecuatorial", "Cinturón andino"],
+                correct: 1
+              },
+              {
+                question: "¿Qué volcanes activos se mencionan?",
+                options: ["Arenal y Irazú", "Popocatépetl y Colima", "Momotombo, San Cristóbal, Concepción", "Vesuvio y Etna"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'energia', 
+            name: "Energías renovables",
+            content: "Nicaragua ha desarrollado importantes proyectos de energías renovables como parte de su estrategia para reducir la dependencia de combustibles fósiles y promover el desarrollo sostenible. El país aprovecha sus recursos naturales para generar energía geotérmica, eólica, solar e hidroeléctrica. Destaca el proyecto geotérmico San Jacinto-Tizate en el occidente del país, uno de los más importantes de Centroamérica. También se han implementado parques eólicos en la Costa Caribe y proyectos solares en zonas rurales, contribuyendo a una matriz energética más limpia y sostenible.",
+            quiz: [
+              {
+                question: "¿Qué proyecto geotérmico es destacado en Nicaragua?",
+                options: ["Momotombo", "San Cristóbal", "San Jacinto-Tizate", "Concepción"],
+                correct: 2
+              },
+              {
+                question: "¿Qué tipo de energías renovables se desarrollan?",
+                options: ["Geotermia, eólica, solar e hidroeléctrica", "Nuclear y carbón", "Gas natural y petróleo", "Biomasa y queroseno"],
+                correct: 0
+              },
+              {
+                question: "¿Dónde se han implementado parques eólicos?",
+                options: ["Occidente", "Norte", "Costa Caribe", "Centro"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'biodiversidad', 
+            name: "Biodiversidad y conservación ambiental",
+            content: "Nicaragua posee una rica biodiversidad con reservas naturales como Bosawas (la segunda reserva de bosque tropical más grande de América después de la Amazonía) e Indio Maíz, que albergan especies endémicas y ecosistemas tropicales únicos. Estas áreas protegidas son objeto de investigaciones científicas enfocadas en la conservación de la flora y fauna, el monitoreo de especies en peligro de extinción como el jaguar y el águila harpía, y el estudio de los impactos del cambio climático. Estos esfuerzos científicos son cruciales para preservar el patrimonio natural del país y promover prácticas sostenibles de uso de recursos.",
+            quiz: [
+              {
+                question: "¿Qué reservas naturales son importantes para la biodiversidad?",
+                options: ["Bosawas e Indio Maíz", "Mombacho y Apoyo", "Cosigüina y Telica", "Ometepe y Zapatera"],
+                correct: 0
+              },
+              {
+                question: "¿Qué especies en peligro se monitorean?",
+                options: ["Tiburones y ballenas", "Jaguar y águila harpía", "Leones y tigres", "Osos y lobos"],
+                correct: 1
+              },
+              {
+                question: "¿Qué es Bosawas en América?",
+                options: ["Reserva más pequeña", "Segunda reserva de bosque tropical más grande", "Reserva marina", "Parque urbano"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'clima', 
+            name: "Cambio climático y sostenibilidad",
+            content: "Los estudios sobre cambio climático en Nicaragua se enfocan en entender y mitigar sus impactos en la agricultura, el agua y las costas del Caribe. El país es particularmente vulnerable a fenómenos climáticos extremos como sequías, inundaciones y huracanes, que afectan la seguridad alimentaria y los medios de vida de las comunidades. Las investigaciones científicas buscan desarrollar estrategias de adaptación, como cultivos resistentes al clima, sistemas de captación de agua y planes de manejo costero sostenible. Estos estudios son fundamentales para la planificación del desarrollo nacional y la protección de los ecosistemas más vulnerables.",
+            quiz: [
+              {
+                question: "¿Qué región es vulnerable al cambio climático?",
+                options: ["Zona Central", "Costa Caribe", "Norte de Nicaragua", "Occidente"],
+                correct: 1
+              },
+              {
+                question: "¿Qué fenómenos climáticos extremos afectan a Nicaragua?",
+                options: ["Nevadas y granizo", "Sequías, inundaciones y huracanes", "Tormentas de arena", "Olas de calor extremas"],
+                correct: 1
+              },
+              {
+                question: "¿Qué estrategias se buscan desarrollar?",
+                options: ["Ignorar el cambio climático", "Cultivos resistentes y captación de agua", "Migración masiva", "Construcción de diques altos"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'agricultura', 
+            name: "Desarrollo agrícola y biotecnología",
+            content: "La investigación en desarrollo agrícola y biotecnología en Nicaragua es impulsada por universidades y el Instituto Nicaragüense de Tecnología Agropecuaria (INTA). Los estudios se enfocan en desarrollar cultivos resistentes a plagas y sequías, mejorar la productividad agrícola y promover prácticas sostenibles. Se investigan variedades de maíz, frijol, arroz y café adaptadas a las condiciones locales, así como técnicas de agricultura orgánica y agroecología. Estos esfuerzos científicos buscan fortalecer la seguridad alimentaria, mejorar los ingresos de los productores y reducir el impacto ambiental de la agricultura.",
+            quiz: [
+              {
+                question: "¿Qué instituto se enfoca en tecnología agropecuaria?",
+                options: ["INETER", "INTA", "MARENA", "ICT"],
+                correct: 1
+              },
+              {
+                question: "¿Qué cultivos se investigan?",
+                options: ["Trigo y cebada", "Maíz, frijol, arroz y café", "Soja y maíz transgénico", "Frutas tropicales exclusivamente"],
+                correct: 1
+              },
+              {
+                question: "¿Qué prácticas se promueven?",
+                options: ["Uso intensivo de químicos", "Agricultura orgánica y agroecología", "Monocultivo extensivo", "Agricultura industrial"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'salud', 
+            name: "Salud pública y enfermedades tropicales",
+            content: "Los proyectos de investigación en salud pública en Nicaragua se centran en enfermedades tropicales transmitidas por vectores, como el dengue, zika, chikungunya y malaria. Estas investigaciones incluyen el monitoreo epidemiológico, el desarrollo de estrategias de control de vectores, la mejora de diagnósticos y tratamientos, y la educación comunitaria para la prevención. Las universidades y centros de investigación colaboran con el Ministerio de Salud para fortalecer el sistema de salud pública y responder eficazmente a brotes epidémicos, protegiendo especialmente a las poblaciones más vulnerables.",
+            quiz: [
+              {
+                question: "¿Qué enfermedades tropicales se estudian en Nicaragua?",
+                options: ["Tuberculosis y cólera", "Dengue, zika y chikungunya", "Malaria y fiebre amarilla", "VIH y hepatitis"],
+                correct: 1
+              },
+              {
+                question: "¿Qué incluyen las investigaciones?",
+                options: ["Solo tratamiento", "Monitoreo, control de vectores, diagnóstico y educación", "Vacunación masiva exclusiva", "Aislamiento de poblaciones"],
+                correct: 1
+              },
+              {
+                question: "¿Con quién colaboran las universidades?",
+                options: ["Ministerio de Educación", "Ministerio de Salud", "Organizaciones privadas", "Gobiernos extranjeros exclusivamente"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'educacion', 
+            name: "Educación científica y tecnológica",
+            content: "La educación científica y tecnológica en Nicaragua es promovida por universidades como la Universidad Nacional de Ingeniería (UNI) y la Universidad Nacional Autónoma de Nicaragua en Managua (UNAN-Managua). Estas instituciones ofrecen programas de formación en ciencia, tecnología, ingeniería y matemáticas (STEM), y desarrollan investigación aplicada en áreas estratégicas para el país. Además, existen programas de divulgación científica, ferias de ciencia y competencias estudiantiles que fomentan el interés por las carreras científicas y tecnológicas entre los jóvenes nicaragüenses.",
+            quiz: [
+              {
+                question: "¿Qué universidad es conocida por sus programas de ingeniería?",
+                options: ["UNAN-Managua", "UNI", "URACCAN", "Bluefields"],
+                correct: 1
+              },
+              {
+                question: "¿Qué tipo de programas ofrecen?",
+                options: ["Solo humanidades", "Ciencia, tecnología, ingeniería y matemáticas (STEM)", "Solo artes", "Administración de empresas"],
+                correct: 1
+              },
+              {
+                question: "¿Qué fomentan las ferias de ciencia?",
+                options: ["El deporte", "El interés por carreras científicas y tecnológicas", "La música", "La literatura"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'astronomia', 
+            name: "Astronomía y divulgación científica",
+            content: "Las actividades de astronomía y divulgación científica en Nicaragua son promovidas principalmente por el Club de Astronomía de Nicaragua y observatorios educativos en universidades. Estas iniciativas organizan observaciones astronómicas públicas, talleres educativos, conferencias y campañas de concientización sobre la contaminación lumínica. El objetivo es promover el interés por el espacio, la ciencia y la exploración del universo entre estudiantes y la población en general, fomentando una cultura científica y crítica en la sociedad nicaragüense.",
+            quiz: [
+              {
+                question: "¿Qué organización promueve la astronomía en Nicaragua?",
+                options: ["NASA Nicaragua", "Club de Astronomía de Nicaragua", "Observatorio Nacional", "Sociedad Astronómica"],
+                correct: 1
+              },
+              {
+                question: "¿Qué actividades organizan?",
+                options: ["Solo conferencias", "Observaciones astronómicas públicas y talleres", "Viajes al espacio", "Construcción de cohetes"],
+                correct: 1
+              },
+              {
+                question: "¿Sobre qué hacen campañas de concientización?",
+                options: ["Contaminación del agua", "Contaminación lumínica", "Contaminación del aire", "Contaminación acústica"],
+                correct: 1
+              }
+            ]
+          },
+          {
+            id: 'agua', 
+            name: "Gestión del agua y recursos naturales",
+            content: "Las investigaciones sobre gestión del agua y recursos naturales en Nicaragua se enfocan en cuerpos de agua estratégicos como el Lago Cocibolca (el lago más grande de Centroamérica) y el Río San Juan. Estos estudios abordan temas como la conservación de cuencas hidrográficas, la calidad del agua, el uso sostenible de recursos hídricos, y los impactos de actividades humanas como la agricultura y la urbanización. La investigación científica en este campo es crucial para garantizar el acceso al agua potable, proteger los ecosistemas acuáticos y promover un manejo integral de los recursos naturales del país.",
+            quiz: [
+              {
+                question: "¿Qué lago es el más grande de Centroamérica?",
+                options: ["Lago de Managua", "Lago de Nicaragua (Cocibolca)", "Lago de Apanás", "Lago de Xiloá"],
+                correct: 1
+              },
+              {
+                question: "¿Qué temas abordan los estudios sobre agua?",
+                options: ["Solo pesca", "Conservación, calidad del agua y uso sostenible", "Construcción de represas exclusivamente", "Privatización del agua"],
+                correct: 1
+              },
+              {
+                question: "¿Qué río es estratégico además del lago?",
+                options: ["Río Coco", "Río Escondido", "Río San Juan", "Río Grande de Matagalpa"],
+                correct: 2
+              }
+            ]
+          },
+          {
+            id: 'innovacion', 
+            name: "Innovación tecnológica y emprendimiento científico",
+            content: "El desarrollo de innovación tecnológica y emprendimiento científico en Nicaragua está siendo impulsado por jóvenes nicaragüenses que crean startups y proyectos en áreas como robótica, software, tecnologías verdes y soluciones digitales. Estas iniciativas surgen en incubadoras universitarias, hackatones y concursos de innovación, y buscan resolver problemas locales con enfoques tecnológicos. Aunque el ecosistema de innovación aún está en desarrollo, estos emprendimientos representan el potencial del talento joven nicaragüense y su capacidad para contribuir al desarrollo económico y social del país a través de la ciencia y la tecnología.",
+            quiz: [
+              {
+                question: "¿Quiénes impulsan la innovación tecnológica?",
+                options: ["Gobierno exclusivamente", "Empresas extranjeras", "Jóvenes nicaragüenses", "Organizaciones internacionales"],
+                correct: 2
+              },
+              {
+                question: "¿En qué áreas crean proyectos?",
+                options: ["Solo agricultura", "Robótica, software, tecnologías verdes", "Solo turismo", "Solo minería"],
+                correct: 1
+              },
+              {
+                question: "¿Dónde surgen estas iniciativas?",
+                options: ["En el campo exclusivamente", "En incubadoras universitarias y hackatones", "En el gobierno central", "En empresas estatales"],
+                correct: 1
+              }
+            ]
+          }
+        ]
+      }
+    };
+    // Función para guardar y cargar progreso del usuario
+    function saveProgress(category, topicId, score) {
+      try {
+        const key = `progress_${category}_${topicId}`;
+        localStorage.setItem(key, score.toString());
+        updateTopicButtons();
+      } catch (e) {
+        console.warn('No se pudo guardar el progreso:', e);
+      }
+    }
+    function getProgress(category, topicId) {
+      try {
+        const key = `progress_${category}_${topicId}`;
+        const saved = localStorage.getItem(key);
+        return saved ? parseInt(saved) : null;
+      } catch (e) {
+        console.warn('No se pudo cargar el progreso:', e);
+        return null;
+      }
+    }
+    function updateTopicButtons() {
+      const buttons = document.querySelectorAll('.topic-btn');
+      buttons.forEach(button => {
+        const category = currentCategory;
+        const topicId = button.dataset.topicId;
+        if (topicId) {
+          const progress = getProgress(category, topicId);
+          button.classList.remove('success', 'warning', 'error');
+          if (progress !== null) {
+            if (progress >= 80) {
+              button.classList.add('success');
+            } else if (progress >= 70) {
+              button.classList.add('warning');
+            } else {
+              button.classList.add('error');
+            }
+          }
+        }
+      });
+    }
+    let currentCategory = '';
+    let currentTopic = '';
+    let currentQuestionIndex = 0;
+    let selectedAnswer = -1;
+    let correctAnswers = 0;
+    let totalQuestions = 0;
+    function openTopics(category) {
+      currentCategory = category;
+      document.getElementById('topicsTitle').textContent = data[category].title;
+      const topicsGrid = document.getElementById('topicsGrid');
+      topicsGrid.innerHTML = '';
+      data[category].topics.forEach(topic => {
+        const button = document.createElement('button');
+        button.className = 'topic-btn';
+        button.textContent = topic.name;
+        button.dataset.topicId = topic.id;
+        button.onclick = () => openContent(category, topic.id);
+        topicsGrid.appendChild(button);
+      });
+      updateTopicButtons();
+      document.getElementById('topicsModal').classList.add('active');
+    }
+    function openContent(category, topicId) {
+      const topic = data[category].topics.find(t => t.id === topicId);
+      currentTopic = topicId;
+      document.getElementById('contentTitle').textContent = topic.name;
+      document.getElementById('contentText').textContent = topic.content;
+      // Establecer la imagen del tema (placeholder)
+      document.getElementById('contentImage').src = `https://placehold.co/600x300/e2e8f0/64748b?text=${encodeURIComponent(topic.name)}`;
+      document.getElementById('topicsModal').classList.remove('active');
+      document.getElementById('contentModal').classList.add('active');
+    }
+    function openQuiz() {
+      // Encontrar el tema actual y su trivia específica
+      const topic = data[currentCategory].topics.find(t => t.id === currentTopic);
+      if (!topic || !topic.quiz || topic.quiz.length === 0) {
+        alert('No hay trivia disponible para este tema.');
+        return;
+      }
+      currentQuestionIndex = 0;
+      correctAnswers = 0;
+      totalQuestions = topic.quiz.length;
+      loadQuestion(topic.quiz);
+      document.getElementById('contentModal').classList.remove('active');
+      document.getElementById('quizModal').classList.add('active');
+    }
+    function loadQuestion(quizDataArray) {
+      const quizData = quizDataArray[currentQuestionIndex];
+      document.getElementById('quizQuestion').textContent = quizData.question;
+      const optionsContainer = document.getElementById('quizOptions');
+      optionsContainer.innerHTML = '';
+      quizData.options.forEach((option, index) => {
+        const button = document.createElement('div');
+        button.className = 'option';
+        button.textContent = option;
+        button.onclick = () => selectAnswer(index, quizDataArray);
+        optionsContainer.appendChild(button);
+      });
+      document.getElementById('quizFeedback').style.display = 'none';
+      document.getElementById('nextQuestionBtn').style.display = 'none';
+      selectedAnswer = -1;
+    }
+    function selectAnswer(index, quizDataArray) {
+      if (selectedAnswer !== -1) return;
+      selectedAnswer = index;
+      const options = document.querySelectorAll('.option');
+      options.forEach((opt, i) => {
+        if (i === index) opt.classList.add('selected');
+      });
+      const quizData = quizDataArray[currentQuestionIndex];
+      if (index === quizData.correct) {
+        correctAnswers++;
+        document.getElementById('quizFeedback').textContent = '¡Correcto! Excelente respuesta.';
+        document.getElementById('quizFeedback').className = 'feedback correct';
+      } else {
+        document.getElementById('quizFeedback').textContent = `Incorrecto. La respuesta correcta era: ${quizData.options[quizData.correct]}`;
+        document.getElementById('quizFeedback').className = 'feedback incorrect';
+      }
+      document.getElementById('quizFeedback').style.display = 'block';
+      document.getElementById('nextQuestionBtn').style.display = 'block';
+     
+      document.getElementById('nextQuestionBtn').onclick = () => nextQuestion(quizDataArray);
+    }
+    function nextQuestion(quizDataArray) {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizDataArray.length) {
+        loadQuestion(quizDataArray);
+      } else {
+        
+        const score = Math.round((correctAnswers / totalQuestions) * 100);
+        saveProgress(currentCategory, currentTopic, score);
+        document.getElementById('quizQuestion').textContent = `¡Felicidades! Has completado la trivia.
+Tu puntaje: ${correctAnswers} de ${totalQuestions} (${score}%)`;
+        document.getElementById('quizOptions').innerHTML = '';
+        document.getElementById('quizFeedback').style.display = 'none';
+        document.getElementById('nextQuestionBtn').textContent = 'Cerrar';
+        document.getElementById('nextQuestionBtn').onclick = () => closeModal('quizModal');
+      }
+    }
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+    
+    const loader = document.getElementById('loader');
+    const app = document.getElementById('app');
+    window.onload = () => {
+      setTimeout(() => {
+        loader.classList.add('hidden');
+        setTimeout(() => loader.style.display = 'none', 700);
+        app.style.display = 'block';
+      }, 3000);
+    };
+  </script>
+</body>
+</html>

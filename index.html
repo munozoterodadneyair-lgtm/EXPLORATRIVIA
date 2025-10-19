@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EXPLORADORES DEL SABER — Inicio</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f0f9ff;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent1:#0ea5e9;
+      --accent2:#facc15; 
+      --accent3:#10b981;
+      --accent4:#7c3aed; 
+    }
+    *{box-sizing:border-box}
+    body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial; margin:0; background:var(--bg); color:#0b1220;}
+    .wrap{max-width:1100px;margin:28px auto;padding:20px}
+
+    #loader{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;
+      background:linear-gradient(135deg,var(--accent1),#00d1ff 40%, #a7f3d0 100%);
+      z-index:9999; transition:opacity .6s ease, visibility .6s ease;
+    }
+    #loader.hidden{opacity:0; visibility:hidden;}
+    .loader-card{width:320px; background:rgba(255,255,255,0.12); padding:22px; border-radius:18px; text-align:center; box-shadow:0 10px 30px rgba(2,6,23,0.12)}
+    #mapa-nic{
+      width:240px;height:360px;margin:6px auto;background:transparent;
+      filter:drop-shadow(0 8px 24px rgba(2,6,23,0.18));
+      animation:mapPulse 2.6s ease-in-out infinite;
+    }
+    #loader h1{color:white;font-size:22px;margin-top:10px;text-shadow:0 6px 18px rgba(0,0,0,0.18)}
+    #loader p{color:#efffff;margin-top:6px;opacity:.95}
+
+    @keyframes mapPulse{
+      0%{transform:translateY(0) scale(0.98)}
+      50%{transform:translateY(-6px) scale(1.02)}
+      100%{transform:translateY(0) scale(0.98)}
+    }
+
+    header.app-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:20px 0}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand .logo{
+      width:62px;height:62px;border-radius:12px;background:linear-gradient(135deg,var(--accent4),var(--accent1));
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px;
+      box-shadow:0 8px 18px rgba(124,58,237,0.16)
+    }
+    .brand h1{font-size:20px;margin:0;color:#042b4a}
+    .brand p{font-size:13px;color:var(--muted);margin-top:4px}
+
+    .hero{
+      background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6));
+      border-radius:14px;padding:18px;display:flex;gap:18px;align-items:center;
+      box-shadow:0 8px 30px rgba(2,6,23,0.06)
+    }
+    .hero .left{flex:1;text-align:left}
+    .hero h2{font-size:22px;margin:0 0 8px 0;color:#05263a}
+    .hero p{margin:0;color:#234;opacity:.9}
+    .hero .cta{margin-top:12px}
+
+    .btn{
+      display:inline-block;background:linear-gradient(90deg,var(--accent1),var(--accent3)); color:white;padding:10px 16px;border-radius:10px;border:0;font-weight:600;cursor:pointer;text-decoration:none;
+      box-shadow:0 8px 18px rgba(2,6,23,0.08)
+    }
+    .btn.secondary{background:linear-gradient(90deg,#ffd54f,#f59e0b); color:#072034}
+
+    /* Lecciones */
+    .lecciones{margin-top:18px; display:flex; flex-direction:column; gap:18px; align-items:flex-start; min-height:360px;}
+    .slide{max-width:900px;margin:0 auto;background:var(--card);padding:20px;border-radius:14px;box-shadow:0 10px 28px rgba(2,6,23,0.06);display:flex;gap:18px;align-items:center;}
+    .slide .illustration{width:40%;min-width:260px}
+    .slide .content{flex:1;text-align:left}
+    .slide h3{font-size:20px;margin:0 0 8px 0;color:#07385a}
+    .slide p{color:var(--muted);line-height:1.5}
+    .controls-slide{display:flex;justify-content:space-between;gap:12px;margin-top:12px;align-items:center}
+    .dots{display:flex;gap:8px;align-items:center}
+    .dots button{width:10px;height:10px;border-radius:50%;background:#e6eef9;border:0}
+    .dots button.active{background:var(--accent3);box-shadow:0 4px 12px rgba(16,185,129,0.18)}
+
+    svg a:hover circle {
+      fill:#7c3aed;
+      transform:scale(1.05);
+      transition:all 0.3s ease;
+    }
+
+    @media (max-width:900px){
+      .slide{flex-direction:column}
+      .slide .illustration{width:100%;min-width:0}
+      #mapa-nic{width:180px;height:270px}
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loader">
+    <div class="loader-card">
+      <div id="mapa-nic" aria-hidden="true" title="Mapa de Nicaragua">
+        <img src="https://i.postimg.cc/g0zr7JVT/1000000481-removebg-preview.png"
+             alt="Mapa de Nicaragua" 
+             style="width:100%;height:100%;object-fit:contain;border-radius:12px;box-shadow:0 8px 24px rgba(2,6,23,0.18);padding:6px;" />
+      </div>
+    </div>
+    <h1>Exploradores del Saber</h1>
+    <p>Preparando la aventura educativa…</p>
+  </div>
+
+  <div class="wrap" id="app" style="display:none">
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo">ES</div>
+        <div>
+          <h1>EXPLORADORES DEL SABER</h1>
+          <p>Trivia educativa con IA — Enseña Historia, Cultura y Ciencia</p>
+        </div>
+      </div>
+
+      <div style="text-align:right">
+        <div style="margin-bottom:8px;color:var(--muted);font-size:13px">Modo demo • recursos educativos</div>
+        <a class="btn" id="irTriviaTop">Ir a la Trivia</a>
+      </div>
+    </header>
+
+   
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="left">
+        <h2 id="heroTitle">Aprende y compite en equipos — ¡Explora y descubre!</h2>
+        <p>Antes de jugar, revisa estas mini-lecciones rápidas que preparan a tu equipo para la trivia.</p>
+        <div class="cta">
+          <a class="btn secondary" id="comenzarLecciones">Comenzar lecciones</a>
+        </div>
+      </div>
+
+      <div style="width:240px; position:relative;">
+        <svg width="240" height="160" viewBox="0 0 240 160" fill="none"
+             xmlns="http://www.w3.org/2000/svg"
+             style="border-radius:12px;overflow:visible;box-shadow:0 10px 30px rgba(2,6,23,0.06)">
+          <rect x="0" y="0" width="240" height="160" rx="12" fill="white"/>
+          <text x="18" y="36" font-family="Poppins, sans-serif" font-size="18" font-weight="600" fill="#05263a">Explora</text>
+          <text x="18" y="64" font-family="Poppins, sans-serif" font-size="13" fill="#334155">Historia • Cultura • Ciencia</text>
+
+          <!-- Botón funcional IA -->
+          <a href="study.html" target="_blank" rel="noopener">
+            <circle cx="190" cy="50" r="28" fill="#a78bfa" style="cursor:pointer; transition:all 0.3s ease;"/>
+            <text x="174" y="57" font-size="20" fill="white" font-weight="700" pointer-events="none">IA</text>
+          </a>
+        </svg>
+      </div>
+    </section>
+
+    <section class="lecciones" id="leccionesSection" aria-live="polite" style="display:none">
+      <div class="slide" id="slideCurrent">
+        <div class="illustration" id="slideIllustration"></div>
+        <div class="content">
+          <h3 id="slideTitle">Título de la lección</h3>
+          <p id="slideText">Texto de la mini-lección.</p>
+          <div class="controls-slide">
+            <div class="dots" id="slideDots"></div>
+            <div>
+              <button class="btn secondary" id="prevBtn" style="margin-right:8px">Anterior</button>
+              <button class="btn" id="nextBtn">Siguiente lección</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="max-width:900px;margin:18px auto;display:flex;justify-content:center;gap:12px">
+        <a id="irTrivia" class="btn" style="display:none">Jugar Trivia con IA</a>
+        <a id="irTriviaNewTab" class="btn secondary" style="display:none" target="_blank" rel="noopener">Abrir Trivia</a>
+      </div>
+    </section>
+
+    <footer style="margin-top:28px;color:var(--muted);text-align:center;font-size:13px">
+      © Exploradores del Saber — Material educativo • Demo
+    </footer>
+  </div>
+
+  <script>
+    const lecciones = [
+      {id:'historia',title:'Historia: Independencia de Nicaragua',
+       text:'Nicaragua proclamó su independencia de España el 15 de septiembre de 1821...',
+       svg:`<svg viewBox="0 0 300 220"><rect width="300" height="220" rx="12" fill="#fff8e1"/><text x="20" y="100" font-family="Poppins" fill="#444">1821 - Independencia</text></svg>`},
+      {id:'ciencia',title:'Ciencia: Primer humano en el espacio',
+       text:'Yuri Gagarin fue el primer ser humano en orbitar la Tierra el 12 de abril de 1961...',
+       svg:`<svg viewBox="0 0 300 220"><rect width="300" height="220" rx="12" fill="#e6f7ff"/><text x="40" y="100" font-family="Poppins" fill="#0ea5e9">Yuri Gagarin 1961</text></svg>`}
+    ];
+
+    const loader=document.getElementById('loader');
+    const app=document.getElementById('app');
+    const leccionesSection=document.getElementById('leccionesSection');
+    const slideIllustration=document.getElementById('slideIllustration');
+    const slideTitle=document.getElementById('slideTitle');
+    const slideText=document.getElementById('slideText');
+    const prevBtn=document.getElementById('prevBtn');
+    const nextBtn=document.getElementById('nextBtn');
+    const slideDots=document.getElementById('slideDots');
+    const irTrivia=document.getElementById('irTrivia');
+    const irTriviaNewTab=document.getElementById('irTriviaNewTab');
+    const comenzarLeccionesBtn=document.getElementById('comenzarLecciones');
+    const irTriviaTop=document.getElementById('irTriviaTop');
+    let current=0;
+
+    function renderSlide(i){
+      const s=lecciones[i];
+      slideIllustration.innerHTML=s.svg;
+      slideTitle.textContent=s.title;
+      slideText.textContent=s.text;
+      slideDots.innerHTML='';
+      lecciones.forEach((_,idx)=>{
+        const b=document.createElement('button');
+        if(idx===i)b.classList.add('active');
+        b.onclick=()=>{current=idx;renderSlide(current);}
+        slideDots.appendChild(b);
+      });
+      prevBtn.style.display=i===0?'none':'inline-block';
+      nextBtn.textContent=i===lecciones.length-1?'Finalizar':'Siguiente';
+    }
+
+    prevBtn.onclick=()=>{if(current>0){current--;renderSlide(current)}}
+    nextBtn.onclick=()=>{
+      if(current<lecciones.length-1){current++;renderSlide(current);}
+      else{
+        irTrivia.style.display='inline-block';
+        irTriviaNewTab.style.display='inline-block';
+        irTrivia.scrollIntoView({behavior:'smooth'});
+      }
+    }
+    irTrivia.onclick=()=>window.location.href='juego.html';
+    irTriviaNewTab.onclick=()=>window.open('juego.html','_blank','noopener');
+    irTriviaTop.onclick=()=>window.location.href='juego.html';
+    comenzarLeccionesBtn.onclick=()=>{
+      leccionesSection.style.display='block';
+      current=0;renderSlide(current);
+      leccionesSection.scrollIntoView({behavior:'smooth'});
+    }
+    window.onload=()=>{
+      setTimeout(()=>{
+        loader.classList.add('hidden');
+        setTimeout(()=>loader.style.display='none',700);
+        app.style.display='block';
+      },3000);
+    }
+  </script>
+</body>
+</html>
