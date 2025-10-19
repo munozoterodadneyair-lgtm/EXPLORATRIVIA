@@ -86,8 +86,77 @@
       transition:all 0.3s ease;
     }
 
-    /* Responsive Design */
-    @media (max-width:900px){.slide{flex-direction:column}.slide .illustration{width:100%;min-width:0;order:2}.slide .content{order:1;width:100%}}
+    /* RESPONSIVE DESIGN - TODOS TUS BREAKPOINTS */
+    @media (max-width: 1200px) {
+      .wrap { padding: 15px; }
+      header.app-header { padding: 15px 0; }
+      .hero { padding: 15px; gap: 15px; }
+      .slide { padding: 15px; gap: 15px; }
+    }
+
+    @media (max-width: 900px) {
+      .slide { flex-direction: column; }
+      .slide .illustration { width: 100%; min-width: 0; order: 2; }
+      .slide .content { order: 1; width: 100%; }
+      #mapa-nic { width: 180px; height: 270px; }
+      .hero { flex-direction: column; text-align: center; }
+      .hero .left { text-align: center; }
+      .controls-slide { flex-direction: column; align-items: stretch; }
+      .dots { justify-content: center; margin-bottom: 10px; }
+    }
+
+    @media (max-width: 768px) {
+      .wrap { padding: 12px; }
+      header.app-header { flex-direction: column; align-items: center; gap: 15px; text-align: center; }
+      .brand { flex-direction: column; text-align: center; }
+      .brand .logo { width: 50px; height: 50px; font-size: 16px; }
+      .brand h1 { font-size: 18px; }
+      .brand p { font-size: 12px; }
+      .hero h2 { font-size: 20px; }
+      .hero p { font-size: 14px; }
+      .btn { padding: 8px 12px; font-size: 14px; }
+      .slide h3 { font-size: 18px; }
+      .slide p { font-size: 14px; }
+      #mapa-nic { width: 150px; height: 225px; }
+      .loader-card { width: 280px; padding: 18px; }
+      #loader h1 { font-size: 20px; }
+      #loader p { font-size: 14px; }
+    }
+
+    @media (max-width: 576px) {
+      .wrap { padding: 10px; margin: 20px auto; }
+      header.app-header { padding: 12px 0; }
+      .brand .logo { width: 45px; height: 45px; font-size: 14px; }
+      .brand h1 { font-size: 16px; }
+      .brand p { font-size: 11px; }
+      .hero { padding: 12px; }
+      .hero h2 { font-size: 18px; line-height: 1.3; }
+      .hero p { font-size: 13px; line-height: 1.4; }
+      .btn { padding: 7px 10px; font-size: 13px; width: 100%; text-align: center; }
+      .slide { padding: 12px; }
+      .slide h3 { font-size: 16px; line-height: 1.3; }
+      .slide p { font-size: 13px; line-height: 1.5; }
+      .controls-slide > div:last-child { display: flex; flex-direction: column; gap: 8px; }
+      .controls-slide > div:last-child .btn { width: 100%; }
+      #mapa-nic { width: 130px; height: 195px; }
+      .loader-card { width: 240px; padding: 15px; }
+      #loader h1 { font-size: 18px; }
+      footer { font-size: 12px; padding: 0 5px; }
+    }
+
+    @media (max-width: 400px) {
+      .brand .logo { width: 40px; height: 40px; font-size: 12px; }
+      .brand h1 { font-size: 14px; }
+      .hero h2 { font-size: 16px; }
+      #mapa-nic { width: 110px; height: 165px; }
+      .loader-card { width: 200px; padding: 12px; }
+      #loader h1 { font-size: 16px; }
+      #loader p { font-size: 12px; }
+    }
+
+    img { max-width: 100%; height: auto; }
+    body { overflow-x: hidden; }
+    svg { max-width: 100%; height: auto; }
   </style>
 </head>
 <body>
@@ -224,29 +293,17 @@
     }
 
     prevBtn.onclick=()=>{if(current>0){current--;renderSlide(current);}};
-    nextBtn.onclick=()=>{
-      if(current<lecciones.length-1){current++;renderSlide(current);}
-      else{
-        irTrivia.style.display='inline-block';
-        irTriviaNewTab.style.display='inline-block';
-        irTrivia.scrollIntoView({behavior:'smooth'});
-      }
-    };
-    irTrivia.onclick=()=>window.location.href='juego.html';
-    irTriviaNewTab.onclick=()=>window.open('juego.html','_blank','noopener');
-    irTriviaTop.onclick=()=>window.location.href='juego.html';
-    comenzarLeccionesBtn.onclick=()=>{
-      leccionesSection.style.display='block';
-      current=0;renderSlide(current);
-      leccionesSection.scrollIntoView({behavior:'smooth'});
-    };
-    window.onload=()=>{
-      setTimeout(()=>{
-        loader.classList.add('hidden');
-        setTimeout(()=>loader.style.display='none',700);
-        app.style.display='block';
-      },3000);
-    };
+    nextBtn.onclick=()=>{if(current<lecciones.length-1){current++;renderSlide(current);}else{
+      leccionesSection.style.display='none';
+      irTrivia.style.display='inline-block';
+      irTriviaNewTab.style.display='inline-block';
+    }};
+    comenzarLeccionesBtn.onclick=()=>{leccionesSection.style.display='block';renderSlide(0);};
+    irTriviaTop.onclick=()=>{leccionesSection.scrollIntoView({behavior:'smooth'});};
+
+    window.addEventListener('load',()=>{
+      setTimeout(()=>{loader.classList.add('hidden');app.style.display='block';},1500);
+    });
   </script>
 </body>
 </html>
